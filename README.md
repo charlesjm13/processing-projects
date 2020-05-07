@@ -22,3 +22,5 @@ Some ways this example might be improved:
 * Accessibility:
   * Make this visualization usable for colorblind people.
   * Make this visualization usable for people with limited vision (not sure how friendly Processing is screenreaders! I'd be curious to find out.)
+  
+  Edit*(Charles): I am particularly interested in implementing some of logic problems listed above, especially infectivity rate, death, and masks. I will also look into some statistics and possibly add some more variables.  
