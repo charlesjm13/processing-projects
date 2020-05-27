@@ -1,3 +1,5 @@
+// Edits made by Charles Mennerick Spring 2020
+
 /* 
  * COVID-19 Simulator
  * Visualization inspired by this Washington Post article: https://www.washingtonpost.com/graphics/2020/world/corona-simulator/
