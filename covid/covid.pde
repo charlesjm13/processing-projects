@@ -364,10 +364,21 @@ class Ball {
     noStroke();
     if (state == State.INFECTED) {
       // Infected people are drawn in red.
+      if(this.hasMask){
+      fill(230,100,100);
+      }
+      else{
       fill(252, 3, 40);
+      }
     } else if (state == State.UNINFECTED) {
-      // Uninfected people are drawn in gray.
-      fill(204);
+      // Uninfected people are drawn in white/gray.
+      if(this.hasMask){
+      fill(250);
+      }
+      else{
+      fill(190);
+      }
+      
     } else if(state == State.DEAD){
       fill(0);
       //dead people are black
@@ -375,6 +386,7 @@ class Ball {
       // Recovered people are drawn in green
       fill(135, 224, 145);
     }
+    
     
     ellipse(position.x, position.y, radius*2, radius*2);
   }
