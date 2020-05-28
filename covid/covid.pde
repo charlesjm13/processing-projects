@@ -23,6 +23,7 @@ ArrayList<Ball> balls =  new ArrayList<Ball>();
 int infected = 1;
 int uninfected = 199;
 int recovered = 0;
+int dead = 0;
 
 // cols stores the columns in the graph at the top of the screen.
 ArrayList<Column> cols = new ArrayList<Column>();
@@ -41,7 +42,7 @@ void setup() {
   for (int i = 0; i < 200; i++) {
     // Adds a new Ball that starts at a random x value and a random y value that
     // avoids the graph area at the top of the screen.
-    balls.add(new Ball(random(width), random(60, height), 5.0, getIsInfected(i), getIsSocialDistancing(i)));
+    balls.add(new Ball(random(width), random(60, height), 5.0, getIsInfected(i), getIsSocialDistancing(i), (Math.random() < 0.5)));
   }
 }
 
@@ -98,6 +99,7 @@ void drawStats() {
   text("healthy: " + uninfected, 10, 30);
   text("sick: " + infected, 10, 40);
   text("recovered: " + recovered, 10, 20);
+  text("dead: " + dead, 10, 50);
 }
 
 
@@ -105,7 +107,8 @@ void drawStats() {
 enum State {
   UNINFECTED,
   INFECTED,
-  RECOVERED
+  RECOVERED,
+  DEAD
 }
 
 
@@ -124,8 +127,9 @@ class Ball {
   // After 1000 days/frames, the person recovers.
   int infectedDays;
   boolean isSocialDistancing;
+  boolean hasMask;
 
-  Ball(float x, float y, float r_, State state, boolean isSocialDistancing) {
+  Ball(float x, float y, float r_, State state, boolean isSocialDistancing, boolean hasMask) {
     position = new PVector(x, y);
     radius = r_;
     // People who are social distancing should start and stay at 0 velocity,
@@ -140,20 +144,34 @@ class Ball {
     this.state = state;
     infectedDays = 0;
     this.isSocialDistancing = isSocialDistancing;
+    this.hasMask = hasMask;
   }
 
   void update() {
+    if(state == State.DEAD){
+      velocity = new PVector(0, 0);
+    }
+    
     position.add(velocity);
-    if (state == State.INFECTED) {
+    if (state == State.INFECTED ) {
       infectedDays++;
     }
     // If the person has been infected for 1000 days, they should be moved into
     // the recovered state.
     if (infectedDays == 1000) {
-      state = State.RECOVERED;
-      infectedDays = 0;
-      infected--;
-      recovered++;
+      float deathRate = random(100);
+      if(deathRate < 10){
+        state = State.DEAD;
+        infectedDays = 0;
+        infected--;
+        dead++;
+      }
+      else{
+        state = State.RECOVERED;
+        infectedDays = 0;
+        infected--;
+        recovered++;
+      }
     }
   }
 
@@ -179,15 +197,67 @@ class Ball {
   // code that deals with the individual Balls specifically.
   void checkAndSetInfection(Ball other) {
     if (other.state == State.INFECTED  && this.state == State.UNINFECTED) {
-      this.state = State.INFECTED;
-      infected++;
-      uninfected--;
+      float infectionRate = random(100);
+      if(this.isSocialDistancing){
+        if(infectionRate < 85){
+        }
+        else{
+        this.state = State.INFECTED;
+        infected++;
+        uninfected--;
+        }
+      }
+      else if(other.hasMask){
+        if(infectionRate < 90){
+        }
+        else{
+          this.state = State.INFECTED;
+          infected++;
+          uninfected--;
+        }
+      }
+      else{ 
+        if(infectionRate < 25){
+        }
+        else{
+          this.state = State.INFECTED;
+          infected++;
+          uninfected--;
+        }
+      }
     }
     if (this.state == State.INFECTED && other.state == State.UNINFECTED) {
-      other.state = State.INFECTED;
-      infected++;
-      uninfected--;
+      float infectionRate = random(100);
+      if(other.isSocialDistancing){
+        if(infectionRate < 85){
+        }
+        else{
+          other.state = State.INFECTED;
+          infected++;
+          uninfected--;
+        }
+      }
+     else if(this.hasMask){
+        if(infectionRate < 90){
+        }
+        else{
+          other.state = State.INFECTED;
+          infected++;
+          uninfected--;
+        }
+     }
+     else{
+        if(infectionRate < 25){
+        }
+        else{
+          other.state = State.INFECTED;
+          infected++;
+          uninfected--;
+        }
+      }
     }
+    
+    
   }
 
   void checkCollision(Ball other) {
@@ -298,6 +368,9 @@ class Ball {
     } else if (state == State.UNINFECTED) {
       // Uninfected people are drawn in gray.
       fill(204);
+    } else if(state == State.DEAD){
+      fill(0);
+      //dead people are black
     } else {
       // Recovered people are drawn in green
       fill(135, 224, 145);
