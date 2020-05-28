@@ -21,7 +21,7 @@ ArrayList<Ball> balls =  new ArrayList<Ball>();
 // of infected people if it's changed up here). These should be connected
 // in some way.
 int infected = 1;
-int uninfected = 999;
+int uninfected = 2499;
 int recovered = 0;
 int dead = 0;
 
@@ -38,11 +38,11 @@ int leftCol = 110;
 int columnCounter = 0;
 
 void setup() {
-  size(1920, 1080);
-  for (int i = 0; i < 1000; i++) {
+  size(2400, 1300);
+  for (int i = 0; i < 2500; i++) {
     // Adds a new Ball that starts at a random x value and a random y value that
     // avoids the graph area at the top of the screen.
-    balls.add(new Ball(random(width), random(60, height), 5.0, getIsInfected(i), getIsSocialDistancing(i), (Math.random() < 0.25)));
+    balls.add(new Ball(random(width), random(60, height), 5.0, getIsInfected(i), getIsSocialDistancing(i), (Math.random() < 0.6)));
   }
 }
 
@@ -57,7 +57,7 @@ State getIsInfected(int i) {
 // is set to not be social distancing because it makes the simulation move faster.
 // TODO: Update this logic as necessary when getIsInfected() is updated.
 boolean getIsSocialDistancing(int i) {
-  return floor(random(0, 8)) != 0 && i != 0;
+  return floor(random(0, 6)) != 0 && i != 0;
 }
 
 void draw() {
@@ -160,8 +160,8 @@ class Ball {
     // the recovered state.
     
     if (infectedDays == 1000) {
-      float deathRate = random(100);
-      if(deathRate < 10){
+      float deathRate = random(1000);
+      if(deathRate < 15){
         state = State.DEAD;
         infectedDays = 0;
         infected--;
@@ -205,7 +205,7 @@ class Ball {
     if (other.state == State.INFECTED  && this.state == State.UNINFECTED) {
       float infectionRate = random(100);
       if(this.isSocialDistancing){
-        if(infectionRate < 40){
+        if(infectionRate < 80){
         }
         else{
         this.state = State.INFECTED;
@@ -214,7 +214,7 @@ class Ball {
         }
       }
       else if(other.hasMask){
-        if(infectionRate < 30){
+        if(infectionRate < 50){
         }
         else{
           this.state = State.INFECTED;
@@ -223,7 +223,7 @@ class Ball {
         }
       }
       else{ 
-        if(infectionRate < 5){
+        if(infectionRate < 10){
         }
         else{
           this.state = State.INFECTED;
@@ -235,7 +235,7 @@ class Ball {
     if (this.state == State.INFECTED && other.state == State.UNINFECTED) {
       float infectionRate = random(100);
       if(other.isSocialDistancing){
-        if(infectionRate < 40){
+        if(infectionRate < 80){
         }
         else{
           other.state = State.INFECTED;
@@ -244,7 +244,7 @@ class Ball {
         }
       }
      else if(this.hasMask){
-        if(infectionRate < 30){
+        if(infectionRate < 50){
         }
         else{
           other.state = State.INFECTED;
@@ -253,7 +253,7 @@ class Ball {
         }
      }
      else{
-        if(infectionRate < 5){
+        if(infectionRate < 10){
         }
         else{
           other.state = State.INFECTED;
