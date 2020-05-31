@@ -39,10 +39,11 @@ int columnCounter = 0;
 
 void setup() {
   size(2400, 1300);
-  for (int i = 0; i < 2500; i++) {
+  balls.add(new Ball(random(width), random(60, height), 5.0, getIsInfected(0), getIsSocialDistancing(0), false));
+  for (int i = 1; i < 2500; i++) {
     // Adds a new Ball that starts at a random x value and a random y value that
     // avoids the graph area at the top of the screen.
-    balls.add(new Ball(random(width), random(60, height), 5.0, getIsInfected(i), getIsSocialDistancing(i), (Math.random() < 0.6)));
+    balls.add(new Ball(random(width), random(60, height), 5.0, getIsInfected(i), getIsSocialDistancing(i), (Math.random() < 0.5)));
   }
 }
 
@@ -57,7 +58,7 @@ State getIsInfected(int i) {
 // is set to not be social distancing because it makes the simulation move faster.
 // TODO: Update this logic as necessary when getIsInfected() is updated.
 boolean getIsSocialDistancing(int i) {
-  return floor(random(0, 6)) != 0 && i != 0;
+  return floor(random(0, 8)) != 0 && i != 0;
 }
 
 void draw() {
@@ -128,6 +129,7 @@ class Ball {
   int infectedDays;
   boolean isSocialDistancing;
   boolean hasMask;
+  int week;
 
   Ball(float x, float y, float r_, State state, boolean isSocialDistancing, boolean hasMask) {
     position = new PVector(x, y);
@@ -145,6 +147,7 @@ class Ball {
     infectedDays = 0;
     this.isSocialDistancing = isSocialDistancing;
     this.hasMask = hasMask;
+    this.week = 0;
   }
 
   void update() {
@@ -152,30 +155,81 @@ class Ball {
       velocity = new PVector(0, 0);
     }
     
+    if(week >= 100){
+      float sDistance = random(1000);
+      float hMask = random(1000);
+        if(sDistance < 5){
+          if(isSocialDistancing == false){
+            isSocialDistancing = true;
+            m = 1000;
+            velocity = new PVector(0, 0);
+          }
+          else{
+            isSocialDistancing = false;
+            m = radius*.1;
+            velocity = PVector.random2D();
+          }
+        }
+      if(hMask < 15){
+        if(hasMask == true){
+          hasMask = false;
+        }
+        else{
+          hasMask = true;
+        }
+      }
+      week =0;
+    }
+    else{
+      week++;
+    }
+    
     position.add(velocity);
     if (state == State.INFECTED ) {
       infectedDays++;
     }
+   
     // If the person has been infected for 1000 days, they should be moved into
     // the recovered state.
     
     if (infectedDays == 1000) {
       float deathRate = random(1000);
-      if(deathRate < 15){
-        state = State.DEAD;
-        infectedDays = 0;
-        infected--;
-        dead++;
-      }
-      else{
-        if(Math.random() < 0.2){
-          infectedDays = 500;
-        }
-        else{
-          state = State.RECOVERED;
+      if(infected > (uninfected + recovered)){
+        if(deathRate < 150){
+          state = State.DEAD;
           infectedDays = 0;
           infected--;
-          recovered++;
+          dead++;
+        }
+        else{
+          if(Math.random() < 0.2){
+            infectedDays = 500;
+          }
+          else{
+            state = State.RECOVERED;
+            infectedDays = 0;
+            infected--;
+            recovered++;
+          }
+        }
+      }
+      else {
+        if(deathRate < 15){
+          state = State.DEAD;
+          infectedDays = 0;
+          infected--;
+          dead++;
+        }
+        else{
+          if(Math.random() < 0.2){
+            infectedDays = 500;
+          }
+          else{
+            state = State.RECOVERED;
+            infectedDays = 0;
+            infected--;
+            recovered++;
+          }
         }
       }
     }
