@@ -43,7 +43,7 @@ void setup() {
   for (int i = 1; i < 2500; i++) {
     // Adds a new Ball that starts at a random x value and a random y value that
     // avoids the graph area at the top of the screen.
-    balls.add(new Ball(random(width), random(60, height), 5.0, getIsInfected(i), getIsSocialDistancing(i), (Math.random() < 0.1)));
+    balls.add(new Ball(random(width), random(60, height), 5.0, getIsInfected(i), getIsSocialDistancing(i), (Math.random() < 0.5)));
   }
 }
 
@@ -58,7 +58,7 @@ State getIsInfected(int i) {
 // is set to not be social distancing because it makes the simulation move faster.
 // TODO: Update this logic as necessary when getIsInfected() is updated.
 boolean getIsSocialDistancing(int i) {
-  return floor(random(0, 2)) != 0 && i != 0;
+  return floor(random(0, 8)) != 0 && i != 0;
 }
 
 void draw() {
